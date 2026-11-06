@@ -1,0 +1,63 @@
+{
+  "name": "04-ci-failure-recovery",
+  "description": "The default branch's CI passes, then fails, then passes again. The first observation only sets a baseline: the failure and the recovery each become one Trigger, with a rising revision so their ids differ.",
+  "repository": "acme/widgets",
+  "agent": { "login": "superagent", "noreply": "superagent@users.noreply.github.com" },
+  "config": {
+    "repository": "acme/widgets",
+    "cli": "gh",
+    "pollSeconds": 60,
+    "failuresBeforeError": 3,
+    "observeIssues": false,
+    "observePulls": false,
+    "observeComments": false,
+    "observeCi": true
+  },
+  "world": {
+    "default_branch": "main",
+    "head": "5555555555555555555555555555555555555555",
+    "pollInterval": 60,
+    "checks": {
+      "5555555555555555555555555555555555555555": [
+        { "name": "build", "status": "completed", "conclusion": "success" },
+        { "name": "unit", "status": "completed", "conclusion": "success" }
+      ]
+    },
+    "statuses": {
+      "5555555555555555555555555555555555555555": [
+        { "context": "ci/legacy", "state": "success", "updated_at": "+10s" }
+      ]
+    }
+  },
+  "rounds": [
+    { "name": "healthy baseline", "patch": {} },
+    {
+      "name": "unit tests fail",
+      "patch": {
+        "checks": {
+          "5555555555555555555555555555555555555555": [
+            { "name": "build", "status": "completed", "conclusion": "success" },
+            { "name": "unit", "status": "completed", "conclusion": "failure" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "recovered",
+      "patch": {
+        "checks": {
+          "5555555555555555555555555555555555555555": [
+            { "name": "build", "status": "completed", "conclusion": "success" },
+            { "name": "unit", "status": "completed", "conclusion": "success" }
+          ]
+        }
+      }
+    }
+  ],
+  "expect": {
+    "rounds": 3,
+    "triggers": [0, 1, 1],
+    "revisions": [null, 1, 2],
+    "text": ["CI failed 1/3 on main", "CI passed 3/3 on main"]
+  }
+}

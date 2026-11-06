@@ -1,0 +1,36 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # The mock, the shim and their contract tests need nothing but Node.
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm i --no-save zod@4.4.3 @deepseek-ai/schemastery
+      - name: Mock and shim contract
+        run: node --experimental-transform-types --no-warnings --test test/contract.test.ts
+
+  # The scenario tests import the real GitHub Source, so they need a prototype checkout.
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: deepseek-ai/dsh-superagent-prototype
+          path: .prototype
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm i --no-save zod@4.4.3 @deepseek-ai/schemastery
+      - name: Point the harness at the prototype
+        run: printf '%s\n' "$GITHUB_WORKSPACE/.prototype" > prototype.path
+      - name: Run the Source against the mock
+        run: npm test

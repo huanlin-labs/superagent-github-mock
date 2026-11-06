@@ -1,0 +1,25 @@
+{
+  "name": "superagent-github-mock",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An offline mock of the GitHub REST endpoints dsh-superagent's GitHub Source polls, with fixtures that drive the unmodified Source code.",
+  "license": "MIT",
+  "author": "吴昭睿",
+  "homepage": "https://github.com/huanlin-labs/superagent-github-mock",
+  "repository": { "type": "git", "url": "git+https://github.com/huanlin-labs/superagent-github-mock.git" },
+  "bugs": { "url": "https://github.com/huanlin-labs/superagent-github-mock/issues" },
+  "keywords": ["dsh", "dsh-skill", "deepseek-harness", "dsh-superagent", "github", "mock", "test-double", "fixtures"],
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "test": "node --experimental-transform-types --no-warnings --import ./tools/bootstrap.ts --test test/contract.test.ts test/pollRound.test.ts test/outbound.test.ts test/binding.test.ts",
+    "serve": "node --experimental-transform-types --no-warnings --import ./tools/bootstrap.ts tools/serve.ts",
+    "shim": "node --experimental-transform-types --no-warnings src/shim/gh.ts",
+    "list": "node --experimental-transform-types --no-warnings --import ./tools/bootstrap.ts tools/list.ts",
+    "dump": "node --experimental-transform-types --no-warnings --import ./tools/bootstrap.ts tools/dump.ts"
+  },
+  "comment": "zod and @deepseek-ai/schemastery are the prototype's own imports; they are vendored under node_modules/ (git-ignored) or resolved from a local DSH profile, so nothing has to be installed or downloaded. See README §限制.",
+  "dependencies": {
+    "zod": "4.4.3"
+  }
+}

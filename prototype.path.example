@@ -1,0 +1,8 @@
+# Copy this file to `prototype.path` (which is git-ignored) and put one line in it:
+# the directory of a dsh-superagent checkout, the one that contains src/sources/github.ts.
+#
+# Paths may use / or \; ~ is not expanded.
+#
+# Alternatively set SUPERAGENT_SRC, or place a sibling checkout named dsh-superagent-prototype.
+#
+# /path/to/dsh-superagent-prototype

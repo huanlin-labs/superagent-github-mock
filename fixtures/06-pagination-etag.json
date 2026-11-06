@@ -1,0 +1,92 @@
+{
+  "name": "06-pagination-etag",
+  "description": "The account holds 120 notifications, so the first page arrives with a Link rel=\"next\" and the Source must follow the pages — while only the two that name this repository become Triggers. On the next round nothing changed, and the ETag the mock served lets GitHub answer 304, which costs no rate limit.",
+  "repository": "acme/widgets",
+  "agent": { "login": "superagent", "noreply": "superagent@users.noreply.github.com" },
+  "config": {
+    "repository": "acme/widgets",
+    "cli": "gh",
+    "pollSeconds": 60,
+    "failuresBeforeError": 3,
+    "observeIssues": false,
+    "observePulls": false,
+    "observeComments": true,
+    "observeCi": false
+  },
+  "world": {
+    "default_branch": "main",
+    "head": "7777777777777777777777777777777777777777",
+    "pollInterval": 60,
+    "issues": {
+      "50": {
+        "number": 50,
+        "title": "Document the retry budget",
+        "body": "@superagent please add a paragraph about the retry budget to the README.",
+        "state": "open",
+        "user": { "login": "dana", "type": "User", "id": 1001 },
+        "created_at": "+30s",
+        "updated_at": "+31s",
+        "html_url": "https://github.com/acme/widgets/issues/50"
+      },
+      "51": {
+        "number": 51,
+        "title": "Drop the unused fixture loader",
+        "body": "@superagent test/fixtures.ts is dead code now that the parser reads YAML.",
+        "state": "open",
+        "user": { "login": "dana", "type": "User", "id": 1001 },
+        "created_at": "+32s",
+        "updated_at": "+33s",
+        "html_url": "https://github.com/acme/widgets/issues/51"
+      }
+    },
+    "conversationFeed": [],
+    "notifications": [
+      {
+        "times": 118,
+        "id": "94{i}",
+        "repository": { "full_name": "other/repo" },
+        "subject": {
+          "title": "Noise {i}",
+          "url": "https://api.github.com/repos/other/repo/issues/{i}",
+          "type": "Issue"
+        },
+        "reason": "subscribed",
+        "unread": true,
+        "updated_at": "+10s"
+      },
+      {
+        "id": "9501",
+        "repository": { "full_name": "acme/widgets" },
+        "subject": {
+          "title": "Document the retry budget",
+          "url": "https://api.github.com/repos/acme/widgets/issues/50",
+          "type": "Issue"
+        },
+        "reason": "mention",
+        "unread": true,
+        "updated_at": "+31s"
+      },
+      {
+        "id": "9502",
+        "repository": { "full_name": "acme/widgets" },
+        "subject": {
+          "title": "Drop the unused fixture loader",
+          "url": "https://api.github.com/repos/acme/widgets/issues/51",
+          "type": "Issue"
+        },
+        "reason": "mention",
+        "unread": true,
+        "updated_at": "+33s"
+      }
+    ]
+  },
+  "rounds": [
+    { "name": "nothing yet to read", "patch": {} },
+    { "name": "unchanged, so the ETag answers 304", "patch": {} }
+  ],
+  "expect": {
+    "notificationPages": 3,
+    "triggers": [2, 0],
+    "notModified": 1
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "name": "02-inline-review",
+  "description": "A reviewer opens pull request #40 and leaves an inline review comment on a hunk, then replies to their own comment. Both must reach the Source as inline review Triggers carrying the file, the line and the review thread's root id.",
+  "repository": "acme/widgets",
+  "agent": { "login": "superagent", "noreply": "superagent@users.noreply.github.com" },
+  "config": {
+    "repository": "acme/widgets",
+    "cli": "gh",
+    "pollSeconds": 60,
+    "failuresBeforeError": 3,
+    "observeIssues": false,
+    "observePulls": false,
+    "observeComments": true,
+    "observeCi": false
+  },
+  "world": {
+    "default_branch": "main",
+    "head": "2222222222222222222222222222222222222222",
+    "pulls": {
+      "40": {
+        "number": 40,
+        "title": "Retry the parser on a transient read",
+        "body": "Adds a bounded retry around the parser's file read.",
+        "state": "open",
+        "merged": false,
+        "user": { "login": "dana", "type": "User", "id": 1001 },
+        "created_at": "+30s",
+        "updated_at": "+55s",
+        "html_url": "https://github.com/acme/widgets/pull/40",
+        "head": { "sha": "2222222222222222222222222222222222222222", "ref": "fix/parser-retry", "repo": { "full_name": "acme/widgets" } },
+        "base": { "sha": "1111111111111111111111111111111111111111", "ref": "main" },
+        "labels": []
+      }
+    },
+    "reviewComments": {
+      "40": [
+        {
+          "id": 7001,
+          "body": "This swallows the second failure; the retry should surface it.",
+          "user": { "login": "reviewer", "type": "User", "id": 1002 },
+          "html_url": "https://github.com/acme/widgets/pull/40#discussion_r7001",
+          "created_at": "+40s",
+          "updated_at": "+40s",
+          "path": "src/parser.ts",
+          "line": 41,
+          "original_line": 41,
+          "diff_hunk": "@@ -38,7 +38,9 @@ export function parse(file: string): Doc {\n   try {\n-    return read(file)\n+    for (let attempt = 0; attempt < 2; attempt += 1) {\n+      try { return read(file) } catch { /* retry */ }\n+    }\n   } catch (error) {"
+        },
+        {
+          "id": 7002,
+          "body": "Fair. I will rethrow the last error instead of falling through.",
+          "user": { "login": "reviewer", "type": "User", "id": 1002 },
+          "html_url": "https://github.com/acme/widgets/pull/40#discussion_r7002",
+          "created_at": "+55s",
+          "updated_at": "+55s",
+          "path": "src/parser.ts",
+          "line": 41,
+          "in_reply_to_id": 7001
+        }
+      ]
+    },
+    "notifications": [
+      {
+        "id": "9101",
+        "repository": { "full_name": "acme/widgets" },
+        "subject": {
+          "title": "Retry the parser on a transient read",
+          "url": "https://api.github.com/repos/acme/widgets/pulls/40",
+          "type": "PullRequest"
+        },
+        "reason": "subscribed",
+        "unread": true,
+        "updated_at": "+55s"
+      }
+    ]
+  },
+  "expect": {
+    "triggers": 3,
+    "kinds": ["pull", "inline", "inline"],
+    "paths": ["src/parser.ts", "src/parser.ts"],
+    "reviewThreadRoot": 7001
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "name": "03-review-approval",
+  "description": "A reviewer approves pull request #41 without writing a body. The decision alone must still reach the Source: a worker may be waiting for exactly that approval, so the review Trigger carries the state and the commit it decided.",
+  "repository": "acme/widgets",
+  "agent": { "login": "superagent", "noreply": "superagent@users.noreply.github.com" },
+  "config": {
+    "repository": "acme/widgets",
+    "cli": "gh",
+    "pollSeconds": 60,
+    "failuresBeforeError": 3,
+    "observeIssues": false,
+    "observePulls": false,
+    "observeComments": true,
+    "observeCi": false
+  },
+  "world": {
+    "default_branch": "main",
+    "head": "3333333333333333333333333333333333333333",
+    "pulls": {
+      "41": {
+        "number": 41,
+        "title": "Cache the manifest between passes",
+        "body": "Reads the manifest once per pass instead of once per rule.",
+        "state": "open",
+        "merged": false,
+        "user": { "login": "dana", "type": "User", "id": 1001 },
+        "created_at": "+20s",
+        "updated_at": "+60s",
+        "html_url": "https://github.com/acme/widgets/pull/41",
+        "head": { "sha": "4444444444444444444444444444444444444444", "ref": "perf/manifest-cache", "repo": { "full_name": "acme/widgets" } },
+        "base": { "sha": "1111111111111111111111111111111111111111", "ref": "main" },
+        "labels": [{ "name": "performance" }]
+      }
+    },
+    "reviews": {
+      "41": [
+        {
+          "id": 7101,
+          "body": null,
+          "user": { "login": "reviewer", "type": "User", "id": 1002 },
+          "state": "APPROVED",
+          "commit_id": "4444444444444444444444444444444444444444",
+          "submitted_at": "+60s",
+          "html_url": "https://github.com/acme/widgets/pull/41#pullrequestreview-7101"
+        }
+      ]
+    },
+    "notifications": [
+      {
+        "id": "9201",
+        "repository": { "full_name": "acme/widgets" },
+        "subject": {
+          "title": "Cache the manifest between passes",
+          "url": "https://api.github.com/repos/acme/widgets/pulls/41",
+          "type": "PullRequest"
+        },
+        "reason": "review_requested",
+        "unread": true,
+        "updated_at": "+60s"
+      }
+    ]
+  },
+  "expect": {
+    "triggers": 2,
+    "kinds": ["pull", "review"],
+    "reviewState": "APPROVED",
+    "commit": "4444444444444444444444444444444444444444"
+  }
+}

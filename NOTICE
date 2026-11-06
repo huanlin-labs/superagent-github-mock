@@ -1,0 +1,18 @@
+# NOTICE
+
+This project mocks the GitHub REST API for the `github` Source of
+`deepseek-ai/dsh-superagent-prototype` (MIT). It does not contain or redistribute
+the prototype's source: the tests import the prototype's own modules from a
+checkout you point it at, and nothing in the prototype is modified.
+
+The GitHub API shapes it imitates (`notifications`, `issues`, `pulls`, comments,
+reviews, `check-runs`, `statuses`, `contents`, `Link` pagination, ETag/304, `410
+Gone`) are described by GitHub's public REST documentation. "GitHub" is a
+trademark of GitHub, Inc.; this project is not affiliated with GitHub or
+DeepSeek.
+
+The mock server, the `gh` forwarding shim, the harness, the fixtures, the tests
+and the documentation in this repository are original work, released under the
+MIT license in `LICENSE`.
+
+Upstream: https://github.com/deepseek-ai/dsh-superagent-prototype

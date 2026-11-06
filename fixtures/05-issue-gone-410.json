@@ -1,0 +1,40 @@
+{
+  "name": "05-issue-gone-410",
+  "description": "A notification points at Issue #13, which GitHub has permanently deleted. The round must survive: the Thread is recorded as dropped, the round stays successful, and no Trigger is produced — a 410 is not a reason to hold the Source in error.",
+  "repository": "acme/widgets",
+  "agent": { "login": "superagent", "noreply": "superagent@users.noreply.github.com" },
+  "config": {
+    "repository": "acme/widgets",
+    "cli": "gh",
+    "pollSeconds": 60,
+    "failuresBeforeError": 3,
+    "observeIssues": false,
+    "observePulls": false,
+    "observeComments": false,
+    "observeCi": false
+  },
+  "world": {
+    "default_branch": "main",
+    "head": "6666666666666666666666666666666666666666",
+    "gone": [13],
+    "notifications": [
+      {
+        "id": "9301",
+        "repository": { "full_name": "acme/widgets" },
+        "subject": {
+          "title": "Deleted issue",
+          "url": "https://api.github.com/repos/acme/widgets/issues/13",
+          "type": "Issue"
+        },
+        "reason": "mention",
+        "unread": true,
+        "updated_at": "+30s"
+      }
+    ]
+  },
+  "expect": {
+    "triggers": 0,
+    "roundSucceeds": true,
+    "health": "deleted on GitHub: #13"
+  }
+}

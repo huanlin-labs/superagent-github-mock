@@ -1,0 +1,53 @@
+{
+  "name": "01-issue-mention",
+  "description": "A person opens Issue #12 mentioning the agent. Reaches the Source as a notification plus a repository-wide Issues event, and must become one Trigger whose id is stable and whose sender is marked as addressing the agent.",
+  "repository": "acme/widgets",
+  "agent": { "login": "superagent", "noreply": "superagent@users.noreply.github.com" },
+  "config": {
+    "repository": "acme/widgets",
+    "cli": "gh",
+    "pollSeconds": 60,
+    "failuresBeforeError": 3,
+    "observeIssues": true,
+    "observePulls": true,
+    "observeComments": false,
+    "observeCi": false
+  },
+  "world": {
+    "default_branch": "main",
+    "head": "1111111111111111111111111111111111111111",
+    "pollInterval": 60,
+    "issues": {
+      "12": {
+        "number": 12,
+        "title": "Flaky test in the parser suite",
+        "body": "@superagent the fixture at test/parser.spec.ts:41 fails about one run in five. Can you look?",
+        "state": "open",
+        "user": { "login": "dana", "type": "User", "id": 1001 },
+        "created_at": "+30s",
+        "updated_at": "+30s",
+        "html_url": "https://github.com/acme/widgets/issues/12"
+      }
+    },
+    "notifications": [
+      {
+        "id": "9001",
+        "repository": { "full_name": "acme/widgets" },
+        "subject": {
+          "title": "Flaky test in the parser suite",
+          "url": "https://api.github.com/repos/acme/widgets/issues/12",
+          "type": "Issue"
+        },
+        "reason": "mention",
+        "unread": true,
+        "updated_at": "+30s"
+      }
+    ]
+  },
+  "expect": {
+    "triggers": 1,
+    "ids": ["github-issue:12"],
+    "addressed": "mention",
+    "actor": "dana"
+  }
+}

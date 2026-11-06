@@ -1,0 +1,5 @@
+# Vendored only so the prototype's bare imports resolve offline; install them instead of committing them.
+node_modules/
+
+# Local pointer to the prototype checkout on this machine; see prototype.path.example.
+prototype.path
