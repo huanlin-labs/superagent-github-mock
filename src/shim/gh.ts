@@ -126,8 +126,20 @@ export async function ghApi(argv: string[], baseUrl: string): Promise<GhResult> 
 /** `node src/shim/gh.ts api …` — the executable form, for putting on PATH as `gh`. */
 if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` || process.argv[1]?.endsWith('gh.ts')) {
   const base = process.env.GITHUB_MOCK_URL ?? 'http://127.0.0.1:8787'
-  const result = await ghApi(process.argv.slice(2), base)
-  if (result.stdout) process.stdout.write(result.stdout)
-  if (result.stderr) process.stderr.write(result.stderr)
-  process.exitCode = result.code
+  const argv = process.argv.slice(2)
+  if (argv.length === 0 || argv[0] === '-h' || argv[0] === '--help') {
+    // A bare invocation is a misuse, not a crash: say what this shim accepts and how to point it.
+    process.stderr.write([
+      'usage: gh api <path> [--include] [--paginate] [--slurp] [-X METHOD] [-f key=value] [-H header]',
+      '       GITHUB_MOCK_URL   mock base URL, default http://127.0.0.1:8787',
+      'example: GITHUB_MOCK_URL=http://127.0.0.1:8787 gh api "repos/acme/widgets/issues/12" --include',
+      '',
+    ].join('\n'))
+    process.exitCode = argv.length === 0 ? 2 : 0
+  } else {
+    const result = await ghApi(argv, base)
+    if (result.stdout) process.stdout.write(result.stdout)
+    if (result.stderr) process.stderr.write(result.stderr)
+    process.exitCode = result.code
+  }
 }

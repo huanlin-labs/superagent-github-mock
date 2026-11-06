@@ -33,6 +33,21 @@ pollRound(ctx)
 
 结果：**410（已删除）与 304（ETag 未变）之所以能被区分，是因为走的是原型自己的错误翻译路径**，不是我在测试里假装。
 
+接上去之后，一次轮询长这样（`npm run dump` 会原样打出这一路）：
+
+```
+pollRound(ctx)
+  └─ ctx.commands.api('notifications?all=true…')          ← 原型代码，未改
+      └─ Commands.path()  只允许本仓库                     ← 原型代码，未改
+      └─ Commands.run()   ← 本项目唯一动过的地方（src/harness/transport.ts）
+          └─ ghApi(['api','repos/acme/widgets/notifications…'])   ← src/shim/gh.ts
+              └─ fetch → 127.0.0.1:<随机端口>            ← src/mock/server.ts
+                  └─ handle(world, repository, request)        ← src/mock/routes.ts
+                      └─ fixtures/*.json 描述的"世界"
+```
+
+所以改的时候只有三个入口：**fixture**（描述世界）、**routes**（多一条端点）、**transport**（换掉的是 `run()` 还是别的）。
+
 ---
 
 ## 2. 目录
@@ -81,7 +96,7 @@ pollRound(ctx)
 ```powershell
 cd 作品-mock-github
 "E:/path/to/dsh-superagent-prototype" > prototype.path   # 或设 $env:SUPERAGENT_SRC
-npm test            # 33 个用例：契约 / 真实 pollRound / 回帖 / PR 绑定
+npm test            # 34 个用例：契约 / 真实 pollRound / 回帖 / PR 绑定
 npm run list        # 六个场景是什么
 npm run dump        # 逐轮打印每个场景产生的 Trigger 和全部请求
 ```
@@ -147,8 +162,9 @@ mock 只实现这些路径，其它一律 404（和真 GitHub 对未知路径的
 
 ## 6. 测试分四组
 
-- **`contract.test.ts`（12 个）** —— 只看 mock 和 shim：分页的 `Link`、ETag/304、410、`--include` 的表头格式、
-  `--paginate --slurp` 的「每页一个数组」、以及 404/410/304 变成 gh 的 stderr 与非零退出码。
+- **`contract.test.ts`（13 个）** —— 只看 mock 和 shim：分页的 `Link`、ETag/304、410、`--include` 的表头格式、
+  `--paginate --slurp` 的「每页一个数组」、404/410/304 变成 gh 的 stderr 与非零退出码，
+  以及把 shim 当 gh 放在 PATH 上时裸调用要打印用法并退 2（而不是抛栈）。
   它保证「场景测试失败」时先能判断是 mock 变了还是原型变了。**这组不需要原型**，CI 单独跑。
 - **`pollRound.test.ts`（11 个）** —— 导入原型真实的 `sources/github.ts` 的 `pollRound()`，
   喂给它一个实现了 `host.ts` 接口的 `SourceContext`，断言真正产出的 Trigger。还额外直接调用了
@@ -160,7 +176,7 @@ mock 只实现这些路径，其它一律 404（和真 GitHub 对未知路径的
 
 ```powershell
 npm test
-# ℹ tests 33   ℹ suites 8   ℹ pass 33   ℹ fail 0
+# ℹ tests 34   ℹ suites 8   ℹ pass 34   ℹ fail 0
 ```
 
 ---

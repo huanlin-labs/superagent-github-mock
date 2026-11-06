@@ -31,7 +31,7 @@ Requires **Node ≥ 24** (it runs TypeScript directly).
 ## Commands
 
 ```bash
-npm test                     # 33 checks: mock contract, real pollRound, channel sends, PR binding
+npm test                     # 34 checks: mock contract, real pollRound, channel sends, PR binding
 npm run list                 # what the six fixtures are
 npm run dump                 # per-round Triggers, health lines and every request the Source made
 npm run serve 01-issue-mention -- --port 8787     # then curl / follow Link headers by hand

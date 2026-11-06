@@ -1,3 +1,10 @@
+## 0.1.1 — 2026-11-06
+
+- `src/shim/gh.ts`: a bare invocation (or `-h`/`--help`) now prints usage and exits 2 (0 for help)
+  instead of throwing a stack trace, since it is meant to sit on `PATH` as a stand-in `gh`.
+- `test/contract.test.ts`: one more case pinning that usage text and exit code (34 tests).
+- `README.md`: a diagram of the call path from `pollRound()` down to the fixture world, so the
+  single seam this project replaces is visible at a glance.
 # Changelog
 
 ## 0.1.0 — 2026-11-06

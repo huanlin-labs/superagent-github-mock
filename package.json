@@ -1,6 +1,6 @@
 {
   "name": "superagent-github-mock",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "An offline mock of the GitHub REST endpoints dsh-superagent's GitHub Source polls, with fixtures that drive the unmodified Source code.",

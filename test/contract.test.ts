@@ -6,6 +6,7 @@
  * clear whether the mock or the Source changed.
  */
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { startMock } from '../src/mock/server.ts'
@@ -185,4 +186,14 @@ test('shim: a 304 exits non-zero, which is how ETag polling reaches `CliError.co
     assert.equal(second.code, 1)
     assert.equal(second.stderr, 'gh: HTTP 304')
   } finally { await mock.close() }
+})
+
+test('shim CLI: a bare invocation explains itself and exits 2, instead of a stack trace', () => {
+  // `npm run shim` with no arguments used to throw. As a stand-in `gh` on PATH it also has to say
+  // what it accepts, so this pins the usage text and the misuse exit code.
+  const run = spawnSync(process.execPath, ['--experimental-transform-types', '--no-warnings', 'src/shim/gh.ts'], { encoding: 'utf8' })
+  assert.equal(run.status, 2)
+  assert.match(run.stderr, /usage: gh api <path>/)
+  assert.match(run.stderr, /GITHUB_MOCK_URL/)
+  assert.equal(run.stdout, '')
 })
